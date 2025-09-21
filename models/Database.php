@@ -7,11 +7,11 @@ class Database {
     private function __construct() {
         // CREDENCIAIS CORRETAS DO BANCO
         $config = [
-            'host' => 'localhost',
-            'database' => 'dani7103_comunicaplay',
-            'username' => 'dani7103_comunicaplay',
-            'password' => 'nova@2025',
-            'charset' => 'utf8mb4'
+            'host' => getenv('DB_HOST'),
+            'database' => getenv('DB_NAME'),
+            'username' => getenv('DB_USER'),
+            'password' => getenv('DB_PASSWORD'),
+            'charset' => 'utf8mb4' // Mantemos o charset para compatibilidade
         ];
         
         $dsn = "mysql:host={$config['host']};dbname={$config['database']};charset={$config['charset']}";
