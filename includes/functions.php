@@ -437,4 +437,8 @@ function getVideoDuration($filePath) {
     }
 }
 
+<<<<<<< HEAD
 ?>
+=======
+?>
+>>>>>>> 0019ba97b3e850e52c926ad2bd7ea1de5c122793

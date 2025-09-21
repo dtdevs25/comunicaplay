@@ -1094,18 +1094,16 @@ function showToast(message, type = 'info') {
 
 // FUNÇÃO CORRIGIDA PARA VISUALIZAR MÍDIA - COM SUPORTE A SITES
 function visualizarMidia(id) {
-    // Validação robusta do ID
-    if (!id || id === 'undefined' || id === undefined || id === null || id === '') {
-        console.error('ID da mídia inválido:', id);
-        showToast('Erro: ID da mídia inválido', 'error');
+    if (!id) {
+        console.error("ID da mídia não fornecido.");
         return;
     }
-    
+
     console.log('Visualizando mídia ID:', id);
-    
+
     const modal = new bootstrap.Modal(document.getElementById('modalVisualizarMidia'));
     const conteudoMidia = document.getElementById('conteudoMidia');
-    
+
     // Mostra loading
     conteudoMidia.innerHTML = `
         <div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
@@ -1115,9 +1113,9 @@ function visualizarMidia(id) {
             <span class="ms-3">Carregando mídia...</span>
         </div>
     `;
-    
+
     modal.show();
-    
+
     // Busca dados da mídia
     fetch(`/public/api/midias/get-midia.php?id=${id}`)
         .then(response => {
@@ -1132,7 +1130,7 @@ function visualizarMidia(id) {
             if (data.success && data.midia) {
                 const midia = data.midia;
                 let conteudo = '';
-                
+
                 if (midia.tipo === 'youtube' && midia.url_externa) {
                     // Extrai ID do YouTube da URL
                     const youtubeId = midia.url_externa.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/);
@@ -1153,7 +1151,27 @@ function visualizarMidia(id) {
                             </div>
                         `;
                     }
+<<<<<<< HEAD
                 } else if (midia.tipo === 'imagem' && midia.url_externa) {
+=======
+                } else if (midia.tipo === 'imagem' && (midia.caminho_arquivo || midia.url_externa)) {
+                    const imagemUrl = midia.caminho_arquivo ? `<?= SITE_URL ?>/${midia.caminho_arquivo}` : midia.url_externa;
+                    conteudo = `
+                        <img src="${imagemUrl}" 
+                             alt="${midia.nome}" 
+                             class="img-fluid rounded"
+                             style="max-height: 500px;">
+                    `;
+                } else if (midia.tipo === 'video' && midia.caminho_arquivo) {
+                    const videoUrl = `<?= SITE_URL ?>/${midia.caminho_arquivo}`;
+                    conteudo = `
+                        <video controls class="w-100" style="max-height: 500px;">
+                            <source src="${videoUrl}" type="video/mp4">
+                            Seu navegador não suporta o elemento de vídeo.
+                        </video>
+                    `;
+                } else if (midia.tipo === 'link_imagem' && midia.url_externa) {
+>>>>>>> 0019ba97b3e850e52c926ad2bd7ea1de5c122793
                     conteudo = `
                         <img src="${midia.url_externa}" 
                              alt="${midia.nome}" 
@@ -1179,7 +1197,7 @@ function visualizarMidia(id) {
                                     title="${midia.nome}" 
                                     class="site-iframe"
                                     onload="document.getElementById('siteLoading').style.display='none';"
-                                    onerror="document.getElementById('siteLoading').innerHTML='<i class=\\"bi bi-exclamation-triangle me-2\\"></i>Erro ao carregar site';">
+                                    onerror="document.getElementById('siteLoading').innerHTML='<i class=\"bi bi-exclamation-triangle me-2\"></i>Erro ao carregar site';">
                             </iframe>
                         </div>
                         <div class="mt-3">
@@ -1190,44 +1208,46 @@ function visualizarMidia(id) {
                                     ${midia.url_externa}
                                 </a>
                             </p>
+<<<<<<< HEAD
                             ${midia.descricao ? `<p class="text-muted">${midia.descricao}</p>` : ''}
                             <small class="text-muted">
                                 <i class="bi bi-clock me-1"></i>
                                 Duração: ${midia.duracao} segundos
                             </small>
+=======
+>>>>>>> 0019ba97b3e850e52c926ad2bd7ea1de5c122793
                         </div>
                     `;
                 } else {
                     conteudo = `
-                        <div class="text-center p-4">
-                            <i class="bi bi-file-earmark display-1 text-muted"></i>
-                            <h5 class="mt-3">${midia.nome}</h5>
-                            <p class="text-muted">Tipo: ${midia.tipo}</p>
-                            ${midia.url_externa ? `<a href="${midia.url_externa}" target="_blank" class="btn btn-primary">Abrir Link</a>` : ''}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Tipo de mídia não suportado para visualização ou dados ausentes.
                         </div>
                     `;
                 }
-                
+
                 conteudoMidia.innerHTML = conteudo;
             } else {
                 conteudoMidia.innerHTML = `
                     <div class="alert alert-danger">
-                        <i class="bi bi-exclamation-circle me-2"></i>
-                        ${data.message || 'Erro ao carregar mídia'}
+                        <i class="bi bi-x-circle me-2"></i>
+                        Erro ao carregar dados da mídia. (ID: ${id})
                     </div>
                 `;
-                showToast('Erro ao carregar mídia: ' + (data.message || 'Erro desconhecido'), 'error');
             }
         })
         .catch(error => {
-            console.error('Erro:', error);
+            console.error("Erro na requisição fetch:", error);
             conteudoMidia.innerHTML = `
                 <div class="alert alert-danger">
-                    <i class="bi bi-exclamation-circle me-2"></i>
-                    Erro ao carregar mídia
+                    <i class="bi bi-exclamation-octagon me-2"></i>
+                    <strong>Ocorreu um erro de rede.</strong>
+                    <p class="mt-2 mb-0">Não foi possível conectar à API para obter os detalhes da mídia. Verifique sua conexão e a URL da API.</p>
+                    <hr>
+                    <p class="mb-0 small">Detalhes: ${error.message}</p>
                 </div>
             `;
-            showToast('Erro ao carregar mídia', 'error');
         });
 }
 
