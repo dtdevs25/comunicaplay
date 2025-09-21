@@ -1,0 +1,14 @@
+{"timestamp":"2025-08-29 13:29:54","user_id":2,"action":"login_success","details":"Usu\u00e1rio Daniel Santos fez login","ip":"201.28.162.211"}
+{"timestamp":"2025-08-29 13:31:48","user_id":2,"action":"pasta_created","details":"Pasta EHS criada","ip":"201.28.162.211"}
+{"timestamp":"2025-08-29 13:33:14","user_id":2,"action":"link_image_added","details":"Link de imagem Brigada de Emerg\u00eancia adicionado","ip":"201.28.162.211"}
+{"timestamp":"2025-08-29 13:34:01","user_id":2,"action":"link_image_added","details":"Link de imagem CIPA adicionado","ip":"201.28.162.211"}
+{"timestamp":"2025-08-29 13:35:55","user_id":2,"action":"video_uploaded","details":"V\u00eddeo Escadas.mp4 enviado","ip":"201.28.162.211"}
+{"timestamp":"2025-08-29 13:55:56","user_id":2,"action":"video_uploaded","details":"V\u00eddeo Escadas.mp4 enviado","ip":"201.28.162.211"}
+{"timestamp":"2025-08-29 14:27:48","user_id":null,"action":"login_failed","details":"Tentativa de login falhada para email: dsantos@ctdi.com","ip":"201.28.162.211"}
+{"timestamp":"2025-08-29 14:27:53","user_id":null,"action":"login_failed","details":"Tentativa de login falhada para email: dsantos@ctdi.com","ip":"201.28.162.211"}
+{"timestamp":"2025-08-29 14:27:58","user_id":null,"action":"login_failed","details":"Tentativa de login falhada para email: dsantos@ctdi.com","ip":"201.28.162.211"}
+{"timestamp":"2025-09-04 09:31:54","user_id":2,"action":"login_success","details":"Usu\u00e1rio Daniel Santos fez login","ip":"201.28.162.211"}
+{"timestamp":"2025-09-04 09:33:10","user_id":2,"action":"video_uploaded","details":"V\u00eddeo 6 - ORIENTA\u00c7\u00c3O - USO DE CELULAR.mp4 enviado","ip":"201.28.162.211"}
+{"timestamp":"2025-09-04 09:35:08","user_id":2,"action":"video_uploaded","details":"V\u00eddeo USO DO CORRIM\u00c3O.mp4 enviado","ip":"201.28.162.211"}
+{"timestamp":"2025-09-04 10:08:20","user_id":2,"action":"video_uploaded","details":"V\u00eddeo CTDI.mp4 enviado","ip":"201.28.162.211"}
+{"timestamp":"2025-09-20 23:26:56","user_id":2,"action":"login_success","details":"Usu\u00e1rio Daniel Santos fez login","ip":"187.183.40.130"}
