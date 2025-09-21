@@ -533,7 +533,7 @@ ob_start();
 
                     <!-- Tab YouTube -->
                     <div class="tab-pane fade" id="youtube" role="tabpanel" aria-labelledby="youtube-tab">
-                        <form id="formYouTube">
+                        <form id="formYoutube" method="POST" action="controllers/MidiaController.php">
                             <div class="form-section">
                                 <div class="form-section-title">
                                     <i class="bi bi-youtube"></i>
@@ -959,4 +959,159 @@ $(document).ready(function() {
 </style>
 </style>
 
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Variável para o player do YouTube
+    let player;
+
+    // Função para extrair o ID do vídeo do YouTube de uma URL
+    function getYouTubeId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    // Função para carregar o vídeo no player oculto
+    function loadYouTubeVideo(videoId) {
+        if (player) {
+            player.loadVideoById(videoId);
+        } else {
+            // A API do YouTube IFrame Player já está incluída no cabeçalho
+            // A função onYouTubeIframeAPIReady será chamada automaticamente
+            window.onYouTubeIframeAPIReady = function() {
+                player = new YT.Player("youtubePlayer", {
+                    height: "0",
+                    width: "0",
+                    videoId: videoId,
+                    events: {
+                        "onReady": onPlayerReady,
+                        "onStateChange": onPlayerStateChange
+                    }
+                });
+            }
+        }
+    }
+
+    // Evento chamado quando o player está pronto
+    function onPlayerReady(event) {
+        // O player está pronto, mas não fazemos nada aqui ainda
+    }
+
+    // Evento chamado quando o estado do player muda
+    function onPlayerStateChange(event) {
+        // Quando o vídeo começa a tocar (ou está em buffer), obtemos a duração
+        if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING) {
+            const duration = player.getDuration();
+            if (duration > 0) {
+                document.getElementById("youtubeDuracao").value = Math.round(duration);
+                // Pausamos o vídeo para não consumir recursos
+                player.pauseVideo();
+            }
+        }
+    }
+
+    // Adiciona o listener ao campo de URL do YouTube
+    const youtubeUrlInput = document.getElementById("youtubeUrl");
+    if (youtubeUrlInput) {
+        youtubeUrlInput.addEventListener("paste", function(e) {
+            // Aguarda um pequeno instante para o valor ser colado no campo
+            setTimeout(() => {
+                const videoId = getYouTubeId(e.target.value);
+                if (videoId) {
+                    loadYouTubeVideo(videoId);
+                }
+            }, 100);
+        });
+
+        youtubeUrlInput.addEventListener("keyup", function(e) {
+            const videoId = getYouTubeId(e.target.value);
+            if (videoId) {
+                loadYouTubeVideo(videoId);
+            }
+        });
+    }
+
+    // Lida com a submissão do formulário do YouTube via AJAX
+    const formYoutube = document.getElementById("formYoutube");
+    if (formYoutube) {
+        formYoutube.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById("btnAdicionarYoutube");
+            const btnOriginalText = btn.innerHTML;
+
+            // Desativa o botão e mostra o spinner
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adicionando...`;
+
+            const formData = new FormData(formYoutube);
+            formData.append("action", "addYouTube");
+
+            fetch("/public/api/midias/add-youtube.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Mostra mensagem de sucesso
+                    showToast("success", data.message);
+                    // Limpa o formulário
+                    formYoutube.reset();
+                    // Redireciona para a página de mídias após um pequeno atraso
+                    setTimeout(() => {
+                        window.location.href = "midias.php";
+                    }, 1500);
+                } else {
+                    // Mostra mensagem de erro
+                    showToast("error", data.message || "Ocorreu um erro.");
+                }
+            })
+            .catch(error => {
+                console.error("Erro na requisição:", error);
+                showToast("error", "Erro de comunicação com o servidor.");
+            })
+            .finally(() => {
+                // Reativa o botão e restaura o texto original
+                btn.disabled = false;
+                btn.innerHTML = btnOriginalText;
+            });
+        });
+    }
+
+    // Função para exibir toasts (notificações)
+    function showToast(type, message) {
+        const toastContainer = document.querySelector(".toast-container");
+        if (!toastContainer) return;
+
+        const toast = document.createElement("div");
+        toast.className = `toast align-items-center text-white bg-${type} border-0`;
+        toast.role = "alert";
+        toast.ariaLive = "assertive";
+        toast.ariaAtomic = "true";
+
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+
+        // Remove o toast do DOM após ser ocultado
+        toast.addEventListener("hidden.bs.toast", function() {
+            toast.remove();
+        });
+    }
+});
+</script>
 
