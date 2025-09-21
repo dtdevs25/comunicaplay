@@ -23,8 +23,27 @@ try {
     $midiaController = new MidiaController();
     $result = $midiaController->getById($id);
     
-    if ($result['success']) {
-        echo json_encode($result);
+    if ($result['success'] && $result['midia']) {
+        $midia = $result['midia'];
+        
+        // Ajustar URLs para visualização
+        if ($midia['tipo'] === 'video' && $midia['caminho_arquivo']) {
+            $midia['arquivo_local'] = $midia['caminho_arquivo'];
+        } elseif ($midia['tipo'] === 'imagem' && $midia['caminho_arquivo']) {
+            $midia['arquivo_local'] = $midia['caminho_arquivo'];
+        } elseif ($midia['tipo'] === 'youtube' && $midia['url_externa']) {
+            // URL já está correta
+        } elseif ($midia['tipo'] === 'link_imagem' && $midia['url_externa']) {
+            // URL já está correta
+        } elseif ($midia['tipo'] === '' && $midia['url_externa']) {
+            // Tipo site/página
+            $midia['tipo'] = 'site';
+        }
+        
+        echo json_encode([
+            'success' => true,
+            'midia' => $midia
+        ]);
     } else {
         http_response_code(404);
         echo json_encode([

@@ -725,6 +725,75 @@ $(document).ready(function() {
         }
     }
 
+    // Função para detectar duração de vídeo
+    function detectarDuracaoVideo(file, callback) {
+        const video = document.createElement('video');
+        video.preload = 'metadata';
+        
+        video.onloadedmetadata = function() {
+            window.URL.revokeObjectURL(video.src);
+            const duracao = Math.round(video.duration);
+            callback(duracao);
+        };
+        
+        video.onerror = function() {
+            console.error('Erro ao carregar vídeo para detectar duração');
+            callback(0);
+        };
+        
+        video.src = URL.createObjectURL(file);
+    }
+
+    // Event listener para arquivo de vídeo
+    $('#videoFile').on('change', function() {
+        const file = this.files[0];
+        if (file) {
+            detectarDuracaoVideo(file, function(duracao) {
+                $('#videoDuracao').val(duracao);
+            });
+        }
+    });
+
+    // Função para obter duração do YouTube
+    function obterDuracaoYouTube(url, callback) {
+        const videoId = extrairIdYouTube(url);
+        if (!videoId) {
+            callback(0);
+            return;
+        }
+        
+        // Usar YouTube Data API v3 (necessita chave API)
+        // Como alternativa, vamos usar um método simples com iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        
+        // Simular duração padrão por enquanto (pode ser melhorado com API key)
+        setTimeout(() => {
+            document.body.removeChild(iframe);
+            callback(0); // Retorna 0 para que o usuário possa ajustar manualmente
+        }, 1000);
+    }
+
+    function extrairIdYouTube(url) {
+        const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+        const match = url.match(regex);
+        return match ? match[1] : null;
+    }
+
+    // Event listener para URL do YouTube
+    $('#youtubeUrl').on('blur', function() {
+        const url = $(this).val();
+        if (url) {
+            obterDuracaoYouTube(url, function(duracao) {
+                if (duracao > 0) {
+                    $('#youtubeDuracao').val(duracao);
+                }
+            });
+        }
+    });
+
     // Funções de submit de formulários
     $('#formVideo').on('submit', function(e) {
         e.preventDefault();
@@ -738,7 +807,10 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     ComunicaPlay.showAlert('success', response.message);
+                    // Reset completo do formulário
                     $('#formVideo')[0].reset();
+                    $('#videoDuracao').val('0');
+                    $('.file-preview').empty();
                 } else {
                     ComunicaPlay.showAlert('error', response.message);
                 }
@@ -761,7 +833,9 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     ComunicaPlay.showAlert('success', response.message);
+                    // Reset completo do formulário
                     $('#formImagem')[0].reset();
+                    $('.file-preview').empty();
                 } else {
                     ComunicaPlay.showAlert('error', response.message);
                 }
@@ -782,7 +856,9 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     ComunicaPlay.showAlert('success', response.message);
+                    // Reset completo do formulário
                     $('#formYouTube')[0].reset();
+                    $('#youtubeDuracao').val('0');
                 } else {
                     ComunicaPlay.showAlert('error', response.message);
                 }
@@ -803,6 +879,7 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     ComunicaPlay.showAlert('success', response.message);
+                    // Reset completo do formulário
                     $('#formLinkImagem')[0].reset();
                 } else {
                     ComunicaPlay.showAlert('error', response.message);

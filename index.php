@@ -7,7 +7,7 @@
  */
 
 // 1. Defina a URL de destino
-$url_de_destino = 'https://comunica.danielsantos.eng.br/public/login.php';
+$url_de_destino = 'public/login.php';
 
 // 2. Envia o cabeçalho de redirecionamento para o navegador
 // O código de status 301 indica que o redirecionamento é permanente.

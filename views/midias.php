@@ -1153,22 +1153,30 @@ function visualizarMidia(id) {
                             </div>
                         `;
                     }
-                } else if (midia.tipo === 'imagem' && midia.url_externa) {
+                } else if (midia.tipo === 'imagem' && (midia.caminho_arquivo || midia.url_externa)) {
+                    const imagemUrl = midia.caminho_arquivo || midia.url_externa;
+                    conteudo = `
+                        <img src="${imagemUrl}" 
+                             alt="${midia.nome}" 
+                             class="img-fluid rounded"
+                             style="max-height: 500px;">
+                    `;
+                } else if (midia.tipo === 'video' && midia.caminho_arquivo) {
+                    conteudo = `
+                        <video controls class="w-100" style="max-height: 500px;">
+                            <source src="${midia.caminho_arquivo}" type="video/mp4">
+                            Seu navegador não suporta o elemento de vídeo.
+                        </video>
+                    `;
+                } else if (midia.tipo === 'link_imagem' && midia.url_externa) {
                     conteudo = `
                         <img src="${midia.url_externa}" 
                              alt="${midia.nome}" 
                              class="img-fluid rounded"
                              style="max-height: 500px;">
                     `;
-                } else if (midia.tipo === 'video' && midia.arquivo_local) {
-                    conteudo = `
-                        <video controls class="w-100" style="max-height: 500px;">
-                            <source src="${midia.arquivo_local}" type="video/mp4">
-                            Seu navegador não suporta o elemento de vídeo.
-                        </video>
-                    `;
-                } else if (midia.tipo === 'site' && midia.url_externa) {
-                    // NOVA FUNCIONALIDADE: Visualização de sites em iframe
+                } else if ((midia.tipo === 'site' || midia.tipo === '') && midia.url_externa) {
+                    // Site/página
                     conteudo = `
                         <div class="site-preview-container">
                             <div class="site-loading" id="siteLoading">
@@ -1178,6 +1186,7 @@ function visualizarMidia(id) {
                             <iframe src="${midia.url_externa}" 
                                     title="${midia.nome}" 
                                     class="site-iframe"
+                                    style="width: 100%; height: 400px; border: 1px solid #ddd; border-radius: 8px;"
                                     onload="document.getElementById('siteLoading').style.display='none';"
                                     onerror="document.getElementById('siteLoading').innerHTML='<i class=\\"bi bi-exclamation-triangle me-2\\"></i>Erro ao carregar site';">
                             </iframe>
@@ -1190,7 +1199,6 @@ function visualizarMidia(id) {
                                     ${midia.url_externa}
                                 </a>
                             </p>
-                            ${midia.descricao ? `<p class="text-muted">${midia.descricao}</p>` : ''}
                             <small class="text-muted">
                                 <i class="bi bi-clock me-1"></i>
                                 Duração: ${midia.duracao} segundos
