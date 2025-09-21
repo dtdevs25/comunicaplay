@@ -30,3 +30,16 @@ define("LOGIN_LOCKOUT_TIME", 900); // 15 minutos
 // Configuração de ambiente (true para desenvolvimento, false para produção)
 define("IS_DEVELOPMENT", true); // Mudar para false em produção
 
+// Configurações do banco de dados
+$host = getenv('DB_HOST');
+$user = getenv('DB_USER');
+$password = getenv('DB_PASSWORD');
+$dbname = getenv('DB_NAME');
+
+$conn = new mysqli($host, $user, $password, $dbname);
+
+// Verificar conexão
+if ($conn->connect_error) {
+    die("Falha na conexão: " . $conn->connect_error);
+}
+
