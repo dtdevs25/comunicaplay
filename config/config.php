@@ -3,8 +3,8 @@ ob_start();
 
 // Configurações gerais do sistema
 define("SITE_NAME", "Comunica Play");
-define("SITE_URL", "https://comunicaplay.ehspro.com.br");
-define("UPLOAD_MAX_SIZE", 500 * 1024 * 1024); // 500MB
+define("SITE_URL", "https://comunica.danielsantos.eng.br");
+define("UPLOAD_MAX_SIZE", 200 * 1024 * 1024); // 200MB
 define("ALLOWED_VIDEO_TYPES", ["mp4", "avi", "mov"]);
 define("ALLOWED_IMAGE_TYPES", ["jpg", "jpeg", "png", "gif"]);
 define("HEARTBEAT_INTERVAL", 300); // 5 minutos em segundos
@@ -29,17 +29,4 @@ define("LOGIN_LOCKOUT_TIME", 900); // 15 minutos
 
 // Configuração de ambiente (true para desenvolvimento, false para produção)
 define("IS_DEVELOPMENT", true); // Mudar para false em produção
-
-// Configurações do banco de dados
-$host = getenv('DB_HOST');
-$user = getenv('DB_USER');
-$password = getenv('DB_PASSWORD');
-$dbname = getenv('DB_NAME');
-
-$conn = new mysqli($host, $user, $password, $dbname);
-
-// Verificar conexão
-if ($conn->connect_error) {
-    die("Falha na conexão: " . $conn->connect_error);
-}
 

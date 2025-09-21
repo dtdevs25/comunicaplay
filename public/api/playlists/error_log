@@ -688,3 +688,38 @@ Stack trace:
 [20-Sep-2025 23:28:23 America/Fortaleza] Caminho corrigido para CTDI: https://comunica.danielsantos.eng.br/assets/uploads/videos/CTDI_1756991300_68b98f440a3e9.mp4 -> /https://comunica.danielsantos.eng.br/assets/uploads/videos/CTDI_1756991300_68b98f440a3e9.mp4
 [20-Sep-2025 23:28:23 America/Fortaleza] Caminho corrigido para USO DE CELULAR: https://comunica.danielsantos.eng.br/assets/uploads/videos/6 - ORIENTAÇÃO - USO DE CELULAR_1756989190_68b987069e247.mp4 -> /https://comunica.danielsantos.eng.br/assets/uploads/videos/6 - ORIENTAÇÃO - USO DE CELULAR_1756989190_68b987069e247.mp4
 [20-Sep-2025 23:28:23 America/Fortaleza] Mídias carregadas para playlist 62: 3 (caminhos corrigidos)
+[21-Sep-2025 03:45:44 America/Fortaleza] addMidia() chamado: playlist=62, midia=16, ordem=1, tempo=30
+[21-Sep-2025 03:45:44 America/Fortaleza] ✅ Mídia 16 adicionada com sucesso à playlist 62
+[21-Sep-2025 03:45:44 America/Fortaleza] addMidia() chamado: playlist=62, midia=19, ordem=2, tempo=30
+[21-Sep-2025 03:45:44 America/Fortaleza] ✅ Mídia 19 adicionada com sucesso à playlist 62
+[21-Sep-2025 03:45:44 America/Fortaleza] addMidia() chamado: playlist=62, midia=17, ordem=3, tempo=30
+[21-Sep-2025 03:45:44 America/Fortaleza] ✅ Mídia 17 adicionada com sucesso à playlist 62
+[21-Sep-2025 03:45:44 America/Fortaleza] addMidia() chamado: playlist=62, midia=31, ordem=4, tempo=10
+[21-Sep-2025 03:45:44 America/Fortaleza] ✅ Mídia 31 adicionada com sucesso à playlist 62
+[21-Sep-2025 03:52:03 America/Fortaleza] addMidia() chamado: playlist=62, midia=12, ordem=1, tempo=40
+[21-Sep-2025 03:52:03 America/Fortaleza] ✅ Mídia 12 adicionada com sucesso à playlist 62
+[21-Sep-2025 03:52:03 America/Fortaleza] addMidia() chamado: playlist=62, midia=19, ordem=2, tempo=0
+[21-Sep-2025 03:52:03 America/Fortaleza] ✅ Mídia 19 adicionada com sucesso à playlist 62
+[21-Sep-2025 03:52:03 America/Fortaleza] addMidia() chamado: playlist=62, midia=16, ordem=3, tempo=0
+[21-Sep-2025 03:52:03 America/Fortaleza] ✅ Mídia 16 adicionada com sucesso à playlist 62
+[21-Sep-2025 03:52:03 America/Fortaleza] addMidia() chamado: playlist=62, midia=17, ordem=4, tempo=0
+[21-Sep-2025 03:52:03 America/Fortaleza] ✅ Mídia 17 adicionada com sucesso à playlist 62
+[21-Sep-2025 03:55:13 America/Fortaleza] addMidia() chamado: playlist=65, midia=17, ordem=1, tempo=40
+[21-Sep-2025 03:55:13 America/Fortaleza] ✅ Mídia 17 adicionada com sucesso à playlist 65
+[21-Sep-2025 03:55:13 America/Fortaleza] addMidia() chamado: playlist=65, midia=12, ordem=2, tempo=40
+[21-Sep-2025 03:55:13 America/Fortaleza] ✅ Mídia 12 adicionada com sucesso à playlist 65
+[21-Sep-2025 04:32:16 America/Fortaleza] Mídias carregadas para playlist 65: 2 (caminhos corrigidos)
+[21-Sep-2025 05:21:31 America/Fortaleza] addMidia() chamado: playlist=65, midia=17, ordem=1, tempo=40
+[21-Sep-2025 05:21:31 America/Fortaleza] ✅ Mídia 17 adicionada com sucesso à playlist 65
+[21-Sep-2025 05:21:31 America/Fortaleza] addMidia() chamado: playlist=65, midia=12, ordem=2, tempo=40
+[21-Sep-2025 05:21:31 America/Fortaleza] ✅ Mídia 12 adicionada com sucesso à playlist 65
+[21-Sep-2025 05:21:31 America/Fortaleza] addMidia() chamado: playlist=65, midia=16, ordem=3, tempo=16
+[21-Sep-2025 05:21:31 America/Fortaleza] ✅ Mídia 16 adicionada com sucesso à playlist 65
+[21-Sep-2025 05:39:24 America/Fortaleza] addMidia() chamado: playlist=65, midia=17, ordem=1, tempo=40
+[21-Sep-2025 05:39:24 America/Fortaleza] ✅ Mídia 17 adicionada com sucesso à playlist 65
+[21-Sep-2025 05:39:24 America/Fortaleza] addMidia() chamado: playlist=65, midia=12, ordem=2, tempo=40
+[21-Sep-2025 05:39:24 America/Fortaleza] ✅ Mídia 12 adicionada com sucesso à playlist 65
+[21-Sep-2025 05:39:24 America/Fortaleza] addMidia() chamado: playlist=65, midia=16, ordem=3, tempo=16
+[21-Sep-2025 05:39:24 America/Fortaleza] ✅ Mídia 16 adicionada com sucesso à playlist 65
+[21-Sep-2025 05:39:24 America/Fortaleza] addMidia() chamado: playlist=65, midia=35, ordem=4, tempo=10
+[21-Sep-2025 05:39:24 America/Fortaleza] ✅ Mídia 35 adicionada com sucesso à playlist 65

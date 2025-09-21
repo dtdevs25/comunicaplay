@@ -176,7 +176,7 @@ ob_start();
     padding: 0.75rem 1rem;
     transition: all 0.3s ease;
     background: white;
-    background-image: url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%236b7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'m6 8 4 4 4-4\'%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.5rem center;
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;
@@ -437,8 +437,11 @@ ob_start();
                                                     <div class="form-text">ou arraste e solte aqui</div>
                                                 </div>
                                             </div>
-                                            <div class="form-text mt-2">Formatos aceitos: MP4, AVI, MOV, WMV (máx. 100MB)</div>
+                                            <div class="form-text mt-2">Formatos aceitos: MP4, AVI, MOV, WMV (máx. 150MB)</div>
                                             <div class="file-preview mt-2"></div>
+                                            <div class="progress mt-2" style="height: 25px; display: none;">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="videoDuracao" class="form-label">Duração (segundos)</label>
@@ -496,7 +499,7 @@ ob_start();
                                                     <div class="form-text">ou arraste e solte aqui</div>
                                                 </div>
                                             </div>
-                                            <div class="form-text mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 10MB)</div>
+                                            <div class="form-text mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 150MB)</div>
                                             <div class="file-preview mt-2"></div>
                                         </div>
                                         <div class="mb-3">
@@ -530,7 +533,7 @@ ob_start();
 
                     <!-- Tab YouTube -->
                     <div class="tab-pane fade" id="youtube" role="tabpanel" aria-labelledby="youtube-tab">
-                        <form id="formYouTube">
+                        <form id="formYoutube" method="POST" action="controllers/MidiaController.php">
                             <div class="form-section">
                                 <div class="form-section-title">
                                     <i class="bi bi-youtube"></i>
@@ -691,7 +694,6 @@ $content = ob_get_clean();
 // Inclui o template e passa o conteúdo
 require_once __DIR__ . '/../views/template.php';
 ?>
-
 <script>
 $(document).ready(function() {
     // Ativa a primeira aba ao carregar a página
@@ -795,9 +797,19 @@ $(document).ready(function() {
     });
 
     // Funções de submit de formulários
-    $('#formVideo').on('submit', function(e) {
+    $("#formVideo").on("submit", function(e) {
         e.preventDefault();
+        var $form = $(this);
+        var $submitButton = $form.find("button[type=\"submit\"]");
+        var $progressBar = $form.find(".progress");
+        var $progressBarInner = $progressBar.find(".progress-bar");
+
+        // Mostra a barra de progresso e desabilita o botão
+        $progressBar.show();
+        $submitButton.prop("disabled", true).addClass("loading");
+
         var formData = new FormData(this);
+
         $.ajax({
             url: '<?= SITE_URL ?>/public/api/midias/upload-video.php',
             type: 'POST',
@@ -809,14 +821,19 @@ $(document).ready(function() {
                     ComunicaPlay.showAlert('success', response.message);
                     // Reset completo do formulário
                     $('#formVideo')[0].reset();
-                    $('#videoDuracao').val('0');
                     $('.file-preview').empty();
+                    $('#videoDuracao').val('0');
                 } else {
                     ComunicaPlay.showAlert('error', response.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 ComunicaPlay.showAlert('error', 'Erro ao fazer upload do vídeo: ' + (jqXHR.responseJSON && jqXHR.responseJSON.message ? jqXHR.responseJSON.message : errorThrown));
+            },
+            complete: function() {
+                // Esconde a barra de progresso e habilita o botão
+                $progressBar.hide();
+                $submitButton.prop("disabled", false).removeClass("loading");
             }
         });
     });
@@ -917,4 +934,184 @@ $(document).ready(function() {
 });
 </script>
 
+
+
+<style>
+.upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 12px;
+}
+
+.upload-overlay .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+</style>
+</style>
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Variável para o player do YouTube
+    let player;
+
+    // Função para extrair o ID do vídeo do YouTube de uma URL
+    function getYouTubeId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    // Função para carregar o vídeo no player oculto
+    function loadYouTubeVideo(videoId) {
+        if (player) {
+            player.loadVideoById(videoId);
+        } else {
+            // A API do YouTube IFrame Player já está incluída no cabeçalho
+            // A função onYouTubeIframeAPIReady será chamada automaticamente
+            window.onYouTubeIframeAPIReady = function() {
+                player = new YT.Player("youtubePlayer", {
+                    height: "0",
+                    width: "0",
+                    videoId: videoId,
+                    events: {
+                        "onReady": onPlayerReady,
+                        "onStateChange": onPlayerStateChange
+                    }
+                });
+            }
+        }
+    }
+
+    // Evento chamado quando o player está pronto
+    function onPlayerReady(event) {
+        // O player está pronto, mas não fazemos nada aqui ainda
+    }
+
+    // Evento chamado quando o estado do player muda
+    function onPlayerStateChange(event) {
+        // Quando o vídeo começa a tocar (ou está em buffer), obtemos a duração
+        if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING) {
+            const duration = player.getDuration();
+            if (duration > 0) {
+                document.getElementById("youtubeDuracao").value = Math.round(duration);
+                // Pausamos o vídeo para não consumir recursos
+                player.pauseVideo();
+            }
+        }
+    }
+
+    // Adiciona o listener ao campo de URL do YouTube
+    const youtubeUrlInput = document.getElementById("youtubeUrl");
+    if (youtubeUrlInput) {
+        youtubeUrlInput.addEventListener("paste", function(e) {
+            // Aguarda um pequeno instante para o valor ser colado no campo
+            setTimeout(() => {
+                const videoId = getYouTubeId(e.target.value);
+                if (videoId) {
+                    loadYouTubeVideo(videoId);
+                }
+            }, 100);
+        });
+
+        youtubeUrlInput.addEventListener("keyup", function(e) {
+            const videoId = getYouTubeId(e.target.value);
+            if (videoId) {
+                loadYouTubeVideo(videoId);
+            }
+        });
+    }
+
+    // Lida com a submissão do formulário do YouTube via AJAX
+    const formYoutube = document.getElementById("formYoutube");
+    if (formYoutube) {
+        formYoutube.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById("btnAdicionarYoutube");
+            const btnOriginalText = btn.innerHTML;
+
+            // Desativa o botão e mostra o spinner
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Adicionando...`;
+
+            const formData = new FormData(formYoutube);
+            formData.append("action", "addYouTube");
+
+            fetch("/public/api/midias/add-youtube.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Mostra mensagem de sucesso
+                    showToast("success", data.message);
+                    // Limpa o formulário
+                    formYoutube.reset();
+                    // Redireciona para a página de mídias após um pequeno atraso
+                    setTimeout(() => {
+                        window.location.href = "midias.php";
+                    }, 1500);
+                } else {
+                    // Mostra mensagem de erro
+                    showToast("error", data.message || "Ocorreu um erro.");
+                }
+            })
+            .catch(error => {
+                console.error("Erro na requisição:", error);
+                showToast("error", "Erro de comunicação com o servidor.");
+            })
+            .finally(() => {
+                // Reativa o botão e restaura o texto original
+                btn.disabled = false;
+                btn.innerHTML = btnOriginalText;
+            });
+        });
+    }
+
+    // Função para exibir toasts (notificações)
+    function showToast(type, message) {
+        const toastContainer = document.querySelector(".toast-container");
+        if (!toastContainer) return;
+
+        const toast = document.createElement("div");
+        toast.className = `toast align-items-center text-white bg-${type} border-0`;
+        toast.role = "alert";
+        toast.ariaLive = "assertive";
+        toast.ariaAtomic = "true";
+
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+
+        // Remove o toast do DOM após ser ocultado
+        toast.addEventListener("hidden.bs.toast", function() {
+            toast.remove();
+        });
+    }
+});
+</script>
 

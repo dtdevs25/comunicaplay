@@ -253,7 +253,8 @@ class Midia {
                 // Cria a mídia no banco
                 $midiaId = $this->create(
                     $nome,
-                    'imagem',                    $caminhoPublico,
+                    'imagem',
+                    $caminhoPublico,
                     null,
                     $thumbnailGerada ? $caminhoThumbnailPublico : null,
                     $duracao,
@@ -295,13 +296,9 @@ class Midia {
             
             // Baixa thumbnail do YouTube
             $thumbnailUrl = getYouTubeThumbnail($videoId);
-            $thumbnailPath = THUMBNAIL_PATH . 'youtube_' . $videoId . '.jpg';
-            
-            $thumbnailData = @file_get_contents($thumbnailUrl);
-            if ($thumbnailData) {
-                file_put_contents($thumbnailPath, $thumbnailData);
-            } else {
-                $thumbnailPath = null;
+            $thumbnailPath = null;
+            if ($thumbnailUrl) {
+                $thumbnailPath = $thumbnailUrl; // Armazena a URL pública da thumbnail
             }
             
             // Cria a mídia no banco
@@ -404,6 +401,7 @@ class Midia {
             $sql = "SELECT m.*, p.nome as pasta_nome 
                     FROM midias m 
                     LEFT JOIN pastas_midias p ON m.pasta_id = p.id 
+                    LEFT JOIN usuarios u ON m.usuario_criador_id = u.id 
                     WHERE m.ativo = 1 AND m.usuario_criador_id = ?";
             
             $params = [$userId];
@@ -438,3 +436,4 @@ class Midia {
 }
 
 ?>
+

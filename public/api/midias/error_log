@@ -202,3 +202,90 @@ Stack trace:
 [04-Sep-2025 09:40:08 America/Fortaleza] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home2/dani7103/comunica.danielsantos.eng.br/config/config.php:30) in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/get-midia.php on line 6
 [04-Sep-2025 09:40:08 America/Fortaleza] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home2/dani7103/comunica.danielsantos.eng.br/config/config.php:30) in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/get-midia.php on line 7
 [04-Sep-2025 09:40:08 America/Fortaleza] PHP Warning:  Cannot modify header information - headers already sent by (output started at /home2/dani7103/comunica.danielsantos.eng.br/config/config.php:30) in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/get-midia.php on line 8
+[21-Sep-2025 15:00:54 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:00:59 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:00:59 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:01:01 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:01:01 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:01:01 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:01:23 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:04:47 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:04:47 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:41:40 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:41:48 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:41:48 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:42:25 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:42:26 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 15:42:27 America/Fortaleza] PHP Fatal error:  Uncaught ArgumentCountError: Too few arguments to function MidiaController::uploadVideo(), 2 passed in /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php on line 61 and at least 3 expected in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php:21
+Stack trace:
+#0 /home2/dani7103/comunica.danielsantos.eng.br/public/api/midias/upload-video.php(61): MidiaController->uploadVideo(Array, NULL)
+#1 {main}
+  thrown in /home2/dani7103/comunica.danielsantos.eng.br/controllers/MidiaController.php on line 21
+[21-Sep-2025 19:12:55 America/Fortaleza] === ADD-SITE DIRETO ===
+[21-Sep-2025 19:12:55 America/Fortaleza] POST data: {"url":"https:\/\/g1.globo.com\/","nome":"tese","duracao":"30","pasta_id":""}
+[21-Sep-2025 19:12:55 America/Fortaleza] Dados processados - URL: https://g1.globo.com/, Nome: tese, Duração: 30
+[21-Sep-2025 19:12:55 America/Fortaleza] Usuário ID: 2
+[21-Sep-2025 19:12:55 America/Fortaleza] Resultado da inserção - ID: 59
+[21-Sep-2025 19:12:55 America/Fortaleza] === FIM ADD-SITE DIRETO ===
+[21-Sep-2025 19:17:29 America/Fortaleza] === ADD-SITE DIRETO ===
+[21-Sep-2025 19:17:29 America/Fortaleza] POST data: {"url":"https:\/\/dds.danielsantos.eng.br","nome":"teste site","duracao":"30","pasta_id":""}
+[21-Sep-2025 19:17:29 America/Fortaleza] Dados processados - URL: https://dds.danielsantos.eng.br, Nome: teste site, Duração: 30
+[21-Sep-2025 19:17:29 America/Fortaleza] Usuário ID: 2
+[21-Sep-2025 19:17:29 America/Fortaleza] Resultado da inserção - ID: 63
+[21-Sep-2025 19:17:29 America/Fortaleza] === FIM ADD-SITE DIRETO ===
