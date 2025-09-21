@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y \
 # Copiar todos os arquivos do seu site para a pasta padrão do servidor web
 COPY . /var/www/html/
 
-# Dar permissão para o servidor web (www-data) escrever na pasta uploads
-RUN chown -R www-data:www-data /var/www/html/uploads
+# Criar a pasta uploads antes de alterar permissões
+RUN mkdir -p /var/www/html/uploads && chown -R www-data:www-data /var/www/html/uploads
 
 # Habilita o módulo de reescrita do Apache (para URLs amigáveis)
 RUN a2enmod rewrite
