@@ -176,7 +176,7 @@ ob_start();
     padding: 0.75rem 1rem;
     transition: all 0.3s ease;
     background: white;
-    background-image: url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%236b7280\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'m6 8 4 4 4-4\'%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
     background-position: right 0.5rem center;
     background-repeat: no-repeat;
     background-size: 1.5em 1.5em;
@@ -437,8 +437,11 @@ ob_start();
                                                     <div class="form-text">ou arraste e solte aqui</div>
                                                 </div>
                                             </div>
-                                            <div class="form-text mt-2">Formatos aceitos: MP4, AVI, MOV, WMV (máx. 100MB)</div>
+                                            <div class="form-text mt-2">Formatos aceitos: MP4, AVI, MOV, WMV (máx. 150MB)</div>
                                             <div class="file-preview mt-2"></div>
+                                            <div class="progress mt-2" style="height: 25px; display: none;">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                            </div>
                                         </div>
                                         <div class="mb-3">
                                             <label for="videoDuracao" class="form-label">Duração (segundos)</label>
@@ -496,7 +499,7 @@ ob_start();
                                                     <div class="form-text">ou arraste e solte aqui</div>
                                                 </div>
                                             </div>
-                                            <div class="form-text mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 10MB)</div>
+                                            <div class="form-text mt-2">Formatos aceitos: JPG, PNG, GIF (máx. 150MB)</div>
                                             <div class="file-preview mt-2"></div>
                                         </div>
                                         <div class="mb-3">
@@ -691,7 +694,6 @@ $content = ob_get_clean();
 // Inclui o template e passa o conteúdo
 require_once __DIR__ . '/../views/template.php';
 ?>
-
 <script>
 $(document).ready(function() {
     // Ativa a primeira aba ao carregar a página
@@ -795,9 +797,19 @@ $(document).ready(function() {
     });
 
     // Funções de submit de formulários
-    $('#formVideo').on('submit', function(e) {
+    $("#formVideo").on("submit", function(e) {
         e.preventDefault();
+        var $form = $(this);
+        var $submitButton = $form.find("button[type=\"submit\"]");
+        var $progressBar = $form.find(".progress");
+        var $progressBarInner = $progressBar.find(".progress-bar");
+
+        // Mostra a barra de progresso e desabilita o botão
+        $progressBar.show();
+        $submitButton.prop("disabled", true).addClass("loading");
+
         var formData = new FormData(this);
+
         $.ajax({
             url: '<?= SITE_URL ?>/public/api/midias/upload-video.php',
             type: 'POST',
@@ -809,14 +821,19 @@ $(document).ready(function() {
                     ComunicaPlay.showAlert('success', response.message);
                     // Reset completo do formulário
                     $('#formVideo')[0].reset();
-                    $('#videoDuracao').val('0');
                     $('.file-preview').empty();
+                    $('#videoDuracao').val('0');
                 } else {
                     ComunicaPlay.showAlert('error', response.message);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 ComunicaPlay.showAlert('error', 'Erro ao fazer upload do vídeo: ' + (jqXHR.responseJSON && jqXHR.responseJSON.message ? jqXHR.responseJSON.message : errorThrown));
+            },
+            complete: function() {
+                // Esconde a barra de progresso e habilita o botão
+                $progressBar.hide();
+                $submitButton.prop("disabled", false).removeClass("loading");
             }
         });
     });
@@ -916,5 +933,30 @@ $(document).ready(function() {
     });
 });
 </script>
+
+
+
+<style>
+.upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 10;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 12px;
+}
+
+.upload-overlay .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+</style>
+</style>
 
 
