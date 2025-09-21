@@ -1,4 +1,38 @@
 {
   "schemaVersion": 2,
-  "dockerfilePath": "./Dockerfile"
+  "dockerfilePath": "./Dockerfile",
+  "buildArgs": {
+    "UPLOADS_DIR": "/var/www/html/uploads"
+  },
+  "runCommands": [
+    "mkdir -p /var/www/html/uploads",
+    "chown -R www-data:www-data /var/www/html/uploads"
+  ],
+  "image": {
+    "repository": "php",
+    "tag": "8.2-apache"
+  },
+  "phpExtensions": {
+    "gd": {
+      "enabled": true,
+      "options": {
+        "withFreetype": true,
+        "withJpeg": true
+      }
+    },
+    "mysqli": {
+      "enabled": true
+    },
+    "pdo": {
+      "enabled": true
+    },
+    "pdo_mysql": {
+      "enabled": true
+    }
+  },
+  "apache": {
+    "modules": [
+      "rewrite"
+    ]
+  }
 }
