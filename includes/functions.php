@@ -419,5 +419,22 @@ function getMediaUrl($midia) {
     return convertPathToUrl($midia['caminho_arquivo'] ?? '');
 }
 
-?>
+/**
+ * Obtém a duração de um vídeo usando ffprobe (parte do FFmpeg)
+ */
+function getVideoDuration($filePath) {
+    if (!file_exists($filePath)) {
+        return 0;
+    }
+    try {
+        // Comando ffprobe para obter a duração em segundos
+        $command = "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " . escapeshellarg($filePath);
+        $duration = shell_exec($command);
+        return floor(floatval($duration));
+    } catch (Exception $e) {
+        error_log("Erro ao obter duração do vídeo com ffprobe: " . $e->getMessage());
+        return 0;
+    }
+}
 
+?>
