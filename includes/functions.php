@@ -437,8 +437,10 @@ function getVideoDuration($filePath) {
     }
 }
 
-<<<<<<< HEAD
+# Criar diretórios necessários e configurar permissões
+RUN mkdir -p /var/www/html/assets/uploads/videos && \
+    mkdir -p /var/www/html/assets/uploads/imagens && \
+    mkdir -p /var/www/html/assets/uploads/miniaturas && \
+    chown -R www-data:www-data /var/www/html/assets/uploads
+
 ?>
-=======
-?>
->>>>>>> 0019ba97b3e850e52c926ad2bd7ea1de5c122793
