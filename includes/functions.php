@@ -1,479 +1,38 @@
 <?php
+// api/midias/upload-video.php
 
-require_once __DIR__ . 
-'/../config/config.php';
+header('Content-Type: application/json');
 
-/**
- * Sanitiza uma string para exibição segura
- */
-function sanitize($string) {
-    return htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-}
+require_once __DIR__ . '/../../controllers/MidiaController.php';
 
-/**
- * Valida um email
- */
-function validateEmail($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-}
+try {
+    // Verifica se recebeu os dados necessários
+    if (!isset($_FILES['video']) || !isset($_POST['nome']) || !isset($_POST['duracao'])) {
+        throw new Exception('Dados incompletos');
+    }
 
-/**
- * Valida uma senha
- */
-function validatePassword($password) {
-    return strlen($password) >= PASSWORD_MIN_LENGTH;
-}
-
-/**
- * Gera um hash único
- */
-function generateUniqueHash($length = 32) {
-    return bin2hex(random_bytes($length / 2));
-}
-
-/**
- * Formata bytes para exibição legível
- */
-function formatBytes($bytes, $precision = 2) {
-    $units = array('B', 'KB', 'MB', 'GB', 'TB');
+    $controller = new MidiaController();
     
-    for ($i = 0; $bytes > 1024; $i++) {
-        $bytes /= 1024;
-    }
-    
-    return round($bytes, $precision) . ' ' . $units[$i];
+    // Processa o upload
+    $result = $controller->uploadVideo(
+        $_FILES['video'],
+        $_POST['nome'],
+        $_POST['duracao'],
+        !empty($_POST['pasta_id']) ? $_POST['pasta_id'] : null
+    );
+
+    // Retorna o resultado
+    echo json_encode($result);
+
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage()
+    ]);
 }
+?>
 
-/**
- * Formata data para exibição
- */
-function formatDate($date, $format = 'd/m/Y H:i') {
-    if (empty($date) || $date === '0000-00-00 00:00:00') {
-        return '-';
-    }
-    
-    return date($format, strtotime($date));
-}
-
-/**
- * Verifica se um arquivo é uma imagem válida
- */
-function isValidImage($file) {
-    if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
-        return false;
-    }
-
-    $allowedExtensions = ALLOWED_IMAGE_TYPES;
-    $fileInfo = pathinfo($file['name']);
-    $extension = strtolower($fileInfo['extension'] ?? '');
-    
-    // 1. Verifica a extensão do arquivo
-    if (!in_array($extension, $allowedExtensions)) {
-        return false;
-    }
-    
-    // 2. Verifica o tipo MIME real do arquivo usando finfo
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mimeType = finfo_file($finfo, $file['tmp_name']);
-    finfo_close($finfo);
-
-    $allowedMimeTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/gif',
-        'image/webp' // Adicionado suporte a webp
-    ];
-
-    if (!in_array($mimeType, $allowedMimeTypes)) {
-        return false;
-    }
-
-    // 3. Verifica se é uma imagem válida usando getimagesize
-    $imageInfo = @getimagesize($file['tmp_name']);
-    return $imageInfo !== false;
-}
-
-/**
- * Verifica se um arquivo é um vídeo válido
- */
-function isValidVideo($file) {
-    if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
-        return false;
-    }
-
-    $allowedExtensions = ALLOWED_VIDEO_TYPES;
-    $fileInfo = pathinfo($file['name']);
-    $extension = strtolower($fileInfo['extension'] ?? '');
-    
-    // 1. Verifica a extensão do arquivo
-    if (!in_array($extension, $allowedExtensions)) {
-        return false;
-    }
-
-    // 2. Verifica o tipo MIME real do arquivo usando finfo
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mimeType = finfo_file($finfo, $file['tmp_name']);
-    finfo_close($finfo);
-
-    $allowedMimeTypes = [
-        'video/mp4',
-        'video/avi',
-        'video/quicktime', // mov
-        'video/x-msvideo', // avi
-        'video/x-flv',     // flv
-        'video/webm'
-    ];
-
-    if (!in_array($mimeType, $allowedMimeTypes)) {
-        return false;
-    }
-
-    // Para vídeos, a verificação de extensão e MIME type já é um bom indicativo.
-    // Poderíamos adicionar uma verificação mais profunda com ffmpeg, mas isso exigiria
-    // a instalação do ffmpeg no servidor e seria mais complexo.
-    return true;
-}
-
-/**
- * Gera uma miniatura para uma imagem
- */
-function generateImageThumbnail($sourcePath, $thumbnailPath, $width = 200, $height = 150) {
-    try {
-        $imageInfo = getimagesize($sourcePath);
-        if (!$imageInfo) {
-            return false;
-        }
-        
-        $sourceWidth = $imageInfo[0];
-        $sourceHeight = $imageInfo[1];
-        $mimeType = $imageInfo['mime'];
-        
-        // Cria a imagem source baseada no tipo
-        switch ($mimeType) {
-            case 'image/jpeg':
-                $sourceImage = imagecreatefromjpeg($sourcePath);
-                break;
-            case 'image/png':
-                $sourceImage = imagecreatefrompng($sourcePath);
-                break;
-            case 'image/gif':
-                $sourceImage = imagecreatefromgif($sourcePath);
-                break;
-            case 'image/webp': // Adicionado suporte a webp
-                $sourceImage = imagecreatefromwebp($sourcePath);
-                break;
-            default:
-                return false;
-        }
-        
-        if (!$sourceImage) {
-            return false;
-        }
-        
-        // Calcula as dimensões mantendo a proporção
-        $ratio = min($width / $sourceWidth, $height / $sourceHeight);
-        $newWidth = intval($sourceWidth * $ratio);
-        $newHeight = intval($sourceHeight * $ratio);
-        
-        // Cria a imagem thumbnail
-        $thumbnail = imagecreatetruecolor($newWidth, $newHeight);
-        
-        // Preserva transparência para PNG e WebP
-        if ($mimeType === 'image/png' || $mimeType === 'image/webp') {
-            imagealphablending($thumbnail, false);
-            imagesavealpha($thumbnail, true);
-            $transparent = imagecolorallocatealpha($thumbnail, 255, 255, 255, 127);
-            imagefilledrectangle($thumbnail, 0, 0, $newWidth, $newHeight, $transparent);
-        }
-        
-        // Redimensiona a imagem
-        imagecopyresampled($thumbnail, $sourceImage, 0, 0, 0, 0, $newWidth, $newHeight, $sourceWidth, $sourceHeight);
-        
-        // Salva a thumbnail
-        $result = false;
-        switch ($mimeType) {
-            case 'image/jpeg':
-                $result = imagejpeg($thumbnail, $thumbnailPath, 85);
-                break;
-            case 'image/png':
-                $result = imagepng($thumbnail, $thumbnailPath, 8);
-                break;
-            case 'image/gif':
-                $result = imagegif($thumbnail, $thumbnailPath);
-                break;
-            case 'image/webp': // Adicionado suporte a webp
-                $result = imagewebp($thumbnail, $thumbnailPath, 85);
-                break;
-        }
-        
-        // Libera memória
-        imagedestroy($sourceImage);
-        imagedestroy($thumbnail);
-        
-        return $result;
-    } catch (Exception $e) {
-        error_log("Erro ao gerar thumbnail: " . $e->getMessage());
-        return false;
-    }
-}
-
-/**
- * Extrai ID do vídeo do YouTube de uma URL
- */
-function extractYouTubeId($url) {
-    $pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/';
-    preg_match($pattern, $url, $matches);
-    return isset($matches[1]) ? $matches[1] : false;
-}
-
-/**
- * Gera URL da thumbnail do YouTube
- */
-function getYouTubeThumbnail($videoId) {
-    return "https://img.youtube.com/vi/{$videoId}/maxresdefault.jpg";
-}
-
-/**
- * Valida URL
- */
-function validateUrl($url) {
-    return filter_var($url, FILTER_VALIDATE_URL) !== false;
-}
-
-/**
- * Cria diretório se não existir
- */
-function createDirectoryIfNotExists($path) {
-    if (!is_dir($path)) {
-        return mkdir($path, 0755, true);
-    }
-    return true;
-}
-
-/**
- * Remove arquivo com segurança
- */
-function safeUnlink($filePath) {
-    if (file_exists($filePath) && is_file($filePath)) {
-        return unlink($filePath);
-    }
-    return true;
-}
-
-/**
- * Gera nome de arquivo único
- */
-function generateUniqueFileName($originalName) {
-    $fileInfo = pathinfo($originalName);
-    $extension = isset($fileInfo['extension']) ? '.' . $fileInfo['extension'] : '';
-    $baseName = isset($fileInfo['filename']) ? $fileInfo['filename'] : 'file';
-    
-    return $baseName . '_' . time() . '_' . uniqid() . $extension;
-}
-
-/**
- * Converte segundos para formato legível
- */
-function formatDuration($seconds) {
-    if ($seconds < 60) {
-        return $seconds . 's';
-    } elseif ($seconds < 3600) {
-        $minutes = floor($seconds / 60);
-        $remainingSeconds = $seconds % 60;
-        return $minutes . 'm' . ($remainingSeconds > 0 ? ' ' . $remainingSeconds . 's' : '');
-    } else {
-        $hours = floor($seconds / 3600);
-        $minutes = floor(($seconds % 3600) / 60);
-        $remainingSeconds = $seconds % 60;
-        return $hours . 'h' . ($minutes > 0 ? ' ' . $minutes . 'm' : '') . ($remainingSeconds > 0 ? ' ' . $remainingSeconds . 's' : '');
-    }
-}
-
-/**
- * Verifica se uma string é JSON válido
- */
-function isValidJson($string) {
-    json_decode($string);
-    return json_last_error() === JSON_ERROR_NONE;
-}
-
-/**
- * Log de atividades do sistema
- */
-function logActivity($action, $details = '', $userId = null) {
-    $logEntry = [
-        'timestamp' => date('Y-m-d H:i:s'),
-        'user_id' => $userId,
-        'action' => $action,
-        'details' => IS_DEVELOPMENT ? $details : 'Detalhes ocultos em produção',
-        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
-    ];
-    
-    $logFile = __DIR__ . '/../logs/activity.log';
-    $logDir = dirname($logFile);
-    
-    if (!is_dir($logDir)) {
-        mkdir($logDir, 0755, true);
-    }
-    
-    file_put_contents($logFile, json_encode($logEntry) . "\n", FILE_APPEND | LOCK_EX);
-}
-
-/**
- * Retorna status da tela baseado na última verificação
- */
-function getTelaStatus($ultimaVerificacao) {
-    if (empty($ultimaVerificacao)) {
-        return 'offline';
-    }
-    
-    $lastCheck = strtotime($ultimaVerificacao);
-    $now = time();
-    $diff = $now - $lastCheck;
-    
-    // Se a última verificação foi há mais de 10 minutos, considera offline
-    return $diff <= 600 ? 'online' : 'offline';
-}
-
-/**
- * Sanitiza nome de arquivo
- */
-function sanitizeFileName($filename) {
-    // Remove caracteres especiais e espaços
-    $filename = preg_replace('/[^a-zA-Z0-9._-]/', '_', $filename);
-    // Remove múltiplos underscores consecutivos
-    $filename = preg_replace('/_+/', '_', $filename);
-    // Remove underscores do início e fim
-    $filename = trim($filename, '_');
-    
-    return $filename;
-}
-
-/**
- * Converte caminho absoluto do servidor para URL relativa
- */
-function convertPathToUrl($path) {
-    if (empty($path)) {
-        return '';
-    }
-    
-    // Se já é uma URL externa, retorna como está
-    if (filter_var($path, FILTER_VALIDATE_URL)) {
-        return $path;
-    }
-    
-    // Remove o caminho absoluto do servidor e converte para URL relativa
-    $path = str_replace('/home2/dani7103/epi.danielsantos.eng.br/config/../', '', $path);
-    $path = str_replace('/home2/dani7103/epi.danielsantos.eng.br/', '', $path);
-    
-    // Se o caminho já começa com assets/, adiciona apenas ../
-    if (strpos($path, 'assets/') === 0) {
-        return '../' . $path;
-    }
-    
-    // Se não tem assets/, mas tem uploads/, adiciona o prefixo correto
-    if (strpos($path, 'uploads/') !== false) {
-        return '../assets/' . substr($path, strpos($path, 'uploads/'));
-    }
-    
-    return $path;
-}
-
-/**
- * Gera URL correta para thumbnail
- */
-function getThumbnailUrl($midia) {
-    if (!empty($midia['miniatura'])) {
-        return convertPathToUrl($midia['miniatura']);
-    }
-    
-    // Para imagens, usa o próprio arquivo como thumbnail
-    if ($midia['tipo'] === 'imagem' && !empty($midia['caminho_arquivo'])) {
-        return convertPathToUrl($midia['caminho_arquivo']);
-    }
-    
-    // Para YouTube, gera thumbnail se tiver URL externa
-    if ($midia['tipo'] === 'youtube' && !empty($midia['url_externa'])) {
-        $videoId = extractYouTubeId($midia['url_externa']);
-        if ($videoId) {
-            return getYouTubeThumbnail($videoId);
-        }
-    }
-    
-    // Para link de imagem, usa a URL externa
-    if ($midia['tipo'] === 'link_imagem' && !empty($midia['url_externa'])) {
-        return $midia['url_externa'];
-    }
-    
-    return '';
-}
-
-/**
- * Gera URL correta para arquivo de mídia
- */
-function getMediaUrl($midia) {
-    if ($midia['tipo'] === 'youtube' || $midia['tipo'] === 'link_imagem') {
-        return $midia['url_externa'] ?? '';
-    }
-    
-    return convertPathToUrl($midia['caminho_arquivo'] ?? '');
-}
-
-/**
- * Obtém a duração de um vídeo usando ffprobe (parte do FFmpeg)
- */
-function getVideoDuration($filePath) {
-    if (!file_exists($filePath)) {
-        return 0;
-    }
-    try {
-        // Comando ffprobe para obter a duração em segundos
-        $command = "ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " . escapeshellarg($filePath);
-        $duration = shell_exec($command);
-        return floor(floatval($duration));
-    } catch (Exception $e) {
-        error_log("Erro ao obter duração do vídeo com ffprobe: " . $e->getMessage());
-        return 0;
-    }
-}
-
-// Função para mostrar prévia do vídeo
-function showVideoPreview(file) {
-    const $preview = $('.file-preview');
-    
-    // Limpa prévia anterior
-    $preview.empty();
-    
-    if (file) {
-        // Cria elemento de vídeo
-        const video = document.createElement('video');
-        video.controls = true;
-        video.style.maxWidth = '100%';
-        video.style.maxHeight = '300px';
-        
-        // Cria URL do arquivo
-        const fileURL = URL.createObjectURL(file);
-        video.src = fileURL;
-        
-        // Adiciona vídeo à área de prévia
-        $preview.append(video);
-        
-        // Detecta duração do vídeo
-        video.onloadedmetadata = function() {
-            $('#videoDuracao').val(Math.round(video.duration));
-        };
-    }
-}
-
-// Evento quando um arquivo é selecionado
-$('#videoFile').on('change', function(e) {
-    const file = this.files[0];
-    if (file) {
-        showVideoPreview(file);
-    }
-});
-
-// Configuração do formulário de upload
+<script>
 $("#formVideo").on("submit", function(e) {
     e.preventDefault();
     
@@ -484,7 +43,7 @@ $("#formVideo").on("submit", function(e) {
     $progress.show();
     
     $.ajax({
-        url: '<?= SITE_URL ?>/controllers/MidiaController.php',
+        url: '<?= SITE_URL ?>/public/api/midias/upload-video.php',  // URL correta
         type: 'POST',
         data: formData,
         processData: false,
@@ -500,17 +59,24 @@ $("#formVideo").on("submit", function(e) {
             return xhr;
         },
         success: function(response) {
+            console.log('Upload response:', response); // Para debug
             if (response.success) {
-                ComunicaPlay.showAlert('success', 'Vídeo enviado com sucesso!');
-                setTimeout(() => {
-                    window.location.href = 'midias.php';
-                }, 1500);
+                // Mostra mensagem de sucesso
+                alert('Vídeo enviado com sucesso!');
+                
+                // Limpa o formulário
+                $('#formVideo')[0].reset();
+                $('.file-preview').empty();
+                
+                // Redireciona para a lista de mídias
+                window.location.href = 'midias.php';
             } else {
-                ComunicaPlay.showAlert('error', response.message || 'Erro ao enviar vídeo');
+                alert(response.message || 'Erro ao enviar vídeo');
             }
         },
-        error: function() {
-            ComunicaPlay.showAlert('error', 'Erro ao enviar vídeo');
+        error: function(xhr, status, error) {
+            console.error('Upload error:', {xhr, status, error}); // Para debug
+            alert('Erro ao enviar vídeo: ' + error);
         },
         complete: function() {
             $progress.hide();
@@ -519,29 +85,31 @@ $("#formVideo").on("submit", function(e) {
     });
 });
 
-# Criar diretórios necessários e configurar permissões
-RUN mkdir -p /var/www/html/assets/uploads/videos && \
-    mkdir -p /var/www/html/assets/uploads/imagens && \
-    mkdir -p /var/www/html/assets/uploads/miniaturas && \
-    chown -R www-data:www-data /var/www/html/assets/uploads
-
-?>
-
-<style>
-.file-preview {
-    margin-top: 15px;
-    background: #f8f9fa;
-    padding: 10px;
-    border-radius: 8px;
-    min-height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+// Adicione esta função no seu JavaScript
+function showAlert(type, message) {
+    const alertDiv = $(`<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>`);
+    
+    $('.card-body').prepend(alertDiv);
+    
+    // Remove o alerta após 5 segundos
+    setTimeout(() => {
+        alertDiv.alert('close');
+    }, 5000);
 }
+</script><?php
+public function uploadVideo($file, $nome, $duracao, $pastaId = null) {
+    try {
+        // Verifica e cria o diretório de uploads se necessário
+        $uploadDir = VIDEO_PATH;
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
 
-.file-preview video {
-    max-width: 100%;
-    max-height: 300px;
-    border-radius: 4px;
-}
-</style>
+        if (!is_writable($uploadDir)) {
+            throw new Exception('Diretório de upload não tem permissão de escrita');
+        }
+
+        // ... resto do código ...
