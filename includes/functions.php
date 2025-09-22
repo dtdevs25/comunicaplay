@@ -437,6 +437,88 @@ function getVideoDuration($filePath) {
     }
 }
 
+// Função para mostrar prévia do vídeo
+function showVideoPreview(file) {
+    const $preview = $('.file-preview');
+    
+    // Limpa prévia anterior
+    $preview.empty();
+    
+    if (file) {
+        // Cria elemento de vídeo
+        const video = document.createElement('video');
+        video.controls = true;
+        video.style.maxWidth = '100%';
+        video.style.maxHeight = '300px';
+        
+        // Cria URL do arquivo
+        const fileURL = URL.createObjectURL(file);
+        video.src = fileURL;
+        
+        // Adiciona vídeo à área de prévia
+        $preview.append(video);
+        
+        // Detecta duração do vídeo
+        video.onloadedmetadata = function() {
+            $('#videoDuracao').val(Math.round(video.duration));
+        };
+    }
+}
+
+// Evento quando um arquivo é selecionado
+$('#videoFile').on('change', function(e) {
+    const file = this.files[0];
+    if (file) {
+        showVideoPreview(file);
+    }
+});
+
+// Configuração do formulário de upload
+$("#formVideo").on("submit", function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const $progress = $(this).find('.progress');
+    const $progressBar = $progress.find('.progress-bar');
+    
+    $progress.show();
+    
+    $.ajax({
+        url: '<?= SITE_URL ?>/controllers/MidiaController.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        xhr: function() {
+            const xhr = new window.XMLHttpRequest();
+            xhr.upload.addEventListener("progress", function(evt) {
+                if (evt.lengthComputable) {
+                    const percentComplete = Math.round((evt.loaded / evt.total) * 100);
+                    $progressBar.width(percentComplete + '%').text(percentComplete + '%');
+                }
+            }, false);
+            return xhr;
+        },
+        success: function(response) {
+            if (response.success) {
+                ComunicaPlay.showAlert('success', 'Vídeo enviado com sucesso!');
+                setTimeout(() => {
+                    window.location.href = 'midias.php';
+                }, 1500);
+            } else {
+                ComunicaPlay.showAlert('error', response.message || 'Erro ao enviar vídeo');
+            }
+        },
+        error: function() {
+            ComunicaPlay.showAlert('error', 'Erro ao enviar vídeo');
+        },
+        complete: function() {
+            $progress.hide();
+            $progressBar.width('0%').text('0%');
+        }
+    });
+});
+
 # Criar diretórios necessários e configurar permissões
 RUN mkdir -p /var/www/html/assets/uploads/videos && \
     mkdir -p /var/www/html/assets/uploads/imagens && \
@@ -444,3 +526,22 @@ RUN mkdir -p /var/www/html/assets/uploads/videos && \
     chown -R www-data:www-data /var/www/html/assets/uploads
 
 ?>
+
+<style>
+.file-preview {
+    margin-top: 15px;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px;
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-preview video {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 4px;
+}
+</style>
