@@ -3,7 +3,7 @@ ob_start();
 
 // Configurações gerais do sistema
 define("SITE_NAME", "Comunica Play");
-define("SITE_URL", "https://comunica.danielsantos.eng.br");
+define("SITE_URL", "https://comunicaplay.ehspro.com.br"); // Atualizado para o novo domínio
 define("UPLOAD_MAX_SIZE", 200 * 1024 * 1024); // 200MB
 define("ALLOWED_VIDEO_TYPES", ["mp4", "avi", "mov"]);
 define("ALLOWED_IMAGE_TYPES", ["jpg", "jpeg", "png", "gif"]);
